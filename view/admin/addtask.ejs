@@ -1,0 +1,111 @@
+<% include ../header.ejs %>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+     
+      <% include nav %>
+      <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>发布</legend>
+                <table class="layui-hide" id="test"></table>
+            </fieldset>
+            <form class = "layui-form">
+                <div class="layui-form-item">
+                   <label class="layui-form-label">标题</label> 
+                   <div class="layui-input-block">
+                        <input name="title" type="text" class="layui-input">
+                   </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">奖励</label> 
+                    <div class="layui-input-block">
+                         <input name="reward" type="text" class="layui-input">
+                    </div>
+                 </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">难度</label> 
+                    <div class="layui-input-block">
+                         <div id="test1"></div>
+                    </div>
+                 </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">人数</label> 
+                    <div class="layui-input-block">
+                         <input name="num" type="number" class="layui-input">
+                    </div>
+                 </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">日期</label> 
+                    <div class="layui-input-block">
+                         <input type="text" name="expiration" class="layui-input" id="test2">
+                    </div>
+                 </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label">内容</label> 
+                    <div class="layui-input-block">
+                         <textarea name="expiration" id="demo" style="display:none"></textarea>
+                    </div>
+                 </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label"></label> 
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    </div>
+                 </div>
+            </form>
+        </div>
+      </div>
+      
+      <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+      </div>
+    </div>
+    <script src="../src/layui.js"></script>
+    <script>
+    //JavaScript代码区域
+    layui.use(['element','table','form','rate','laydate','layedit'], function(){
+      var form = layui.form;
+      var rate = layui.rate;
+      var laydate = layui.laydate;
+      var layedit = layui.layedit;
+      var $ = layui.$;
+
+      var pinfen
+       rate.render({
+        elem: '#test1',  //绑定元素
+        choose: function(value){
+          pinfen = value;
+        }
+      });
+      var expiration
+      laydate.render({
+        elem: '#test2', //指定元素
+        change: function(value, date, endDate){
+            alert(value);
+            console.log(value);
+        }
+      });
+      var edit =  layedit.build('demo',{
+          uploadImage:{url:'/api/upload',type:'post'}
+      });
+
+      form.on('submit(formDemo)',function(data){
+        var da = data.field;
+        da.difficulty = pinfen;
+        // da.expiration = expiration;
+        da.content = layedit.getContent(edit);
+        console.log(data);
+        $.ajax({
+            url:'/admin/task/add',
+            method:'post',
+            data:da
+        })
+        return false;
+      })
+    });
+    </script>
+    </body>
+    </html>
